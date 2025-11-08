@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Receipt Scanner | AI Finance Manager</title>
+  <link rel="stylesheet" href="styling.css">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">AI Finance Manager</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="BudgetTracker.html">Budget Tracker</a></li>
+      <li><a href="ReceiptScanner.html">Receipt Reader</a></li>
+      <li><a href="PDFScanner.html">PDF Scanner</a></li>
+      <li><a href="SmartPlanner.html" class="active">Smart Planner</a></li>
+    </ul>
+  </nav>
+
+  <div class="scanner-container">
+    <h2>AI Receipt Reader (Total Detection)</h2>
+    <p>Upload a receipt image, and AI will find the total amount.</p>
+    <input type="file" id="receiptInput" accept="image/*">
+    <button id="analyzeBtn" class="button">Detect Total</button>
+    <div id="ai-output"></div>
+  </div>
+
+  <footer><p>© 2025 AI Finance Manager</p></footer>
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PDF Scanner | AI Finance Manager</title>
+  <link rel="stylesheet" href="styling.css" />
+
+  <!-- ✅ Load PDF.js v5.4.149 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf_viewer.min.css" />
+  <script type="module">
+    import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.min.mjs";
+    window.pdfjsLib = pdfjsLib;
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
+    console.log("✅ PDF.js v5.4.149 loaded successfully!");
+  </script>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="logo">AI Finance Manager</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="BudgetTracker.html">Budget Tracker</a></li>
+      <li><a href="ReceiptScanner.html">Receipt Reader</a></li>
+      <li><a href="PDFScanner.html">PDF Scanner</a></li>
+      <li><a href="SmartPlanner.html" class="active">Smart Planner</a></li>
+    </ul>
+  </nav>
+
+  <div class="scanner-container">
+    <h2>📄 PDF Scanner & Text Extractor</h2>
+    <p>Upload any PDF (digital or scanned) to extract readable text.</p>
+    <div class="upload-box">
+      <input type="file" id="pdfFile" accept=".pdf" />
+      <button id="scanBtn" class="button">Scan PDF</button>
+    </div>
+    <div id="output" class="ai-output"></div>
+  </div>
+
+  <footer>
+    <p>© 2025 AI Finance Manager | Powered by PDF.js & Tesseract.js</p>
+  </footer>
+
+  <!-- ✅ OCR Support -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <!-- ✅ Main logic -->
+  <script src="main.js"></script>
+</body>
+</html>

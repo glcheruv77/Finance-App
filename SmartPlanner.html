@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Finance Planner | AI Finance Manager</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="styling.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">AI Finance Manager</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="BudgetTracker.html">Budget Tracker</a></li>
+      <li><a href="ReceiptScanner.html">Receipt Reader</a></li>
+      <li><a href="PDFScanner.html">PDF Scanner</a></li>
+      <li><a href="SmartPlanner.html" class="active">Smart Planner</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="planner-hero">
+    <h1>🧠 Smart Finance Planner</h1>
+    <p>Set goals, track progress, and let AI generate personalized plans for your financial success.</p>
+  </section>
+
+  <main class="planner-main">
+    <!-- Goal Tracker -->
+    <div class="planner-card">
+      <h2><i class="fa-solid fa-bullseye"></i> Financial Goals</h2>
+      <form id="goal-form" class="goal-form">
+        <input type="text" id="goal-name" placeholder="Goal Name (e.g., Emergency Fund)" required>
+        <input type="number" id="goal-amount" placeholder="Target Amount ($)" required>
+        <button type="submit" class="button">Add Goal</button>
+      </form>
+      <ul id="goals" class="goal-list"></ul>
+    </div>
+
+    <!-- Progress Summary -->
+    <div class="planner-card progress-card">
+      <h2><i class="fa-solid fa-chart-pie"></i> Goal Progress Overview</h2>
+      <div id="goal-progress-container"></div>
+    </div>
+
+    <!-- AI Planner -->
+    <div class="planner-card ai-section">
+      <h2><i class="fa-solid fa-robot"></i> AI Smart Financial Insights</h2>
+      <p class="ai-intro">
+        AI reviews your spending, income, and goals to recommend how much to save each month and where to focus your efforts.
+      </p>
+      <button id="analyze-finances" class="button">Generate AI Plan</button>
+      <div id="ai-analysis-output" class="ai-output">
+        <p class="placeholder-text">Click “Generate AI Plan” to get your personalized financial strategy.</p>
+      </div>
+    </div>
+    
+
+        <!-- Rewards Dashboard -->
+    <div class="planner-card rewards-card">
+    <h2><i class="fa-solid fa-trophy"></i> Rewards Dashboard</h2>
+    <p><strong>User:</strong> <span id="reward-username"></span></p>
+    <p><strong>Points:</strong> <span id="reward-points">0</span></p>
+    <p><strong>Level:</strong> <span id="reward-level">Bronze</span></p>
+    <h3>Badges</h3>
+    <ul id="reward-badges" class="badge-list"></ul>
+    </div>
+
+    <!-- How to Earn Points -->
+    <div class="planner-card how-to-earn">
+    <h2><i class="fa-solid fa-circle-info"></i> How to Earn Points</h2>
+    <ul class="earn-rules">
+        <li>💵 Save money: Earn 1 point per $10 saved</li>
+        <li>🎯 Complete a goal: +50 points</li>
+        <li>📈 Maintain a savings streak: +10 points/week</li>
+        <li>🧠 Use AI Planner suggestions: +20 points</li>
+        <li>📸 Scan receipts or PDFs with totals: +5 points</li>
+    </ul>
+    </div>
+
+    <!-- Rewards & Levels -->
+    <div class="planner-card rewards-info">
+    <h2><i class="fa-solid fa-gift"></i> Rewards & Levels</h2>
+    <ul class="reward-rules">
+        <li>🥉 Bronze (0–99 pts): Starter insights</li>
+        <li>🥈 Silver (100–499 pts): AI nudges + streak tracking</li>
+        <li>🥇 Gold (500–999 pts): Unlock goal suggestions + badges</li>
+        <li>🏆 Platinum (1000+ pts): Full dashboard access + bonus analytics</li>
+    </ul>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 AI Finance Manager | Built with 💙 for smarter finances</p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Budget Tracker | AI Finance Manager</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="styling.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">AI Finance Manager</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="BudgetTracker.html">Budget Tracker</a></li>
+      <li><a href="ReceiptScanner.html">Receipt Reader</a></li>
+      <li><a href="PDFScanner.html">PDF Scanner</a></li>
+      <li><a href="SmartPlanner.html" class="active">Smart Planner</a></li>
+    </ul>
+  </nav>
+
+  <div class="budget-container">
+    <h2>Your Budget Overview</h2>
+
+    <!-- Totals Display -->
+    <div class="totals">
+      <div class="total-box income-box">
+        <h3><i class="fa-solid fa-arrow-up"></i> Income</h3>
+        <p id="total-income">$0</p>
+      </div>
+      <div class="total-box expense-box">
+        <h3><i class="fa-solid fa-arrow-down"></i> Expenses</h3>
+        <p id="total-expense">$0</p>
+      </div>
+      <div class="total-box balance-box">
+        <h3><i class="fa-solid fa-scale-balanced"></i> Balance</h3>
+        <p id="balance">$0</p>
+      </div>
+    </div>
+
+    <!-- Add Transaction Form -->
+    <div class="form-section">
+      <h3>Add a Transaction</h3>
+      <form id="transaction-form">
+        <input type="text" id="description" placeholder="Description" required>
+        <input type="number" id="amount" placeholder="Amount ($)" required>
+        <select id="type" required>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <button type="submit" class="button">Add Transaction</button>
+      </form>
+    </div>
+
+    <!-- Transaction List -->
+    <div class="transactions">
+      <h3>Transaction History</h3>
+      <ul id="transaction-list"></ul>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="chart-section">
+      <h3><i class="fa-solid fa-chart-pie"></i> Income vs Expense</h3>
+      <canvas id="chart" width="300" height="300"></canvas>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 AI Finance Manager | Built with 💙 for smarter finances</p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

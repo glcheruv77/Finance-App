@@ -1,144 +1,518 @@
-/* General Page Setup */
-body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #0a1f44, #1b3b6f, #234b8a);
-    color: #ffffff;
-    margin: 0;
-    padding: 0;
-    text-align: center;
+/* ===========================
+   GLOBAL STYLES
+=========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
-/* Navbar */
+body {
+  background-color: #0a1a2f;
+  color: #e0e8f9;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ===========================
+   NAVBAR
+=========================== */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(10, 25, 55, 0.8);
-    padding: 15px 50px;
-    backdrop-filter: blur(8px);
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  background-color: #08172b;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #12315c;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .logo {
-    font-size: 1.6rem;
-    font-weight: bold;
-    color: #e0f0ff;
+  color: #4da6ff;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .nav-links {
-    list-style: none;
-    display: flex;
-    gap: 25px;
-    margin: 0;
-    padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
 }
 
-.nav-links li a {
-    text-decoration: none;
-    color: #d0e8ff;
-    font-weight: 500;
-    transition: color 0.3s;
+.nav-links a {
+  color: #e0e8f9;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
-.nav-links li a:hover {
-    color: #ffffff;
+.nav-links a:hover,
+.nav-links a.active {
+  color: #4da6ff;
 }
 
-/* Header */
-header {
-    margin: 60px 0 20px;
+/* ===========================
+   HERO SECTION
+=========================== */
+.hero {
+  text-align: center;
+  padding: 4rem 1rem;
+  background: linear-gradient(145deg, #0f2a4a, #08172b);
 }
 
-header h1 {
-    font-size: 2.8rem;
-    margin-bottom: 10px;
-    color: #e6f0ff;
+.hero h2 {
+  font-size: 2.4rem;
+  color: #4da6ff;
+  margin-bottom: 1rem;
 }
 
-header p {
-    font-size: 1.2rem;
-    color: #b0c8e0;
+.hero p {
+  color: #b8c4dd;
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: auto;
 }
 
-/* Container for features */
+/* ===========================
+   MAIN CONTAINER (Feature Boxes)
+=========================== */
 .container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 40px;
-    padding: 40px 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.8rem;
+  padding: 3rem 2rem;
+  max-width: 1200px;
+  margin: auto;
 }
 
-/* Feature Boxes */
 .box {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
-    width: 280px;
-    padding: 30px;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(6px);
+  background: #102540;
+  padding: 2rem 1.5rem;
+  border-radius: 15px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
 .box:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  transform: translateY(-5px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
 }
 
 .box i {
-    color: #4da6ff;
-    margin-bottom: 15px;
+  color: #4da6ff;
+  margin-bottom: 0.8rem;
 }
 
 .box h2 {
-    font-size: 1.4rem;
-    margin: 15px 0 10px;
-    color: #e0ecff;
+  margin-bottom: 0.6rem;
+  color: #e0e8f9;
 }
 
 .box p {
-    font-size: 0.95rem;
-    margin-bottom: 20px;
-    color: #c2d6f0;
+  color: #b9c7e1;
+  margin-bottom: 1.2rem;
 }
 
-/* Buttons */
 .button {
-    display: inline-block;
-    text-decoration: none;
-    color: #fff;
-    background-color: #1a73e8;
-    padding: 10px 20px;
-    border-radius: 25px;
-    transition: background 0.3s ease;
+  background: #4da6ff;
+  color: #0a1a2f;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .button:hover {
-    background-color: #155ab6;
+  background: #1a8cff;
+  color: white;
 }
 
-/* Footer */
-footer {
-    background: rgba(10, 25, 55, 0.9);
-    padding: 20px 0;
-    margin-top: 50px;
-    font-size: 0.9rem;
-    color: #aac4e6;
-    border-top: 2px solid rgba(255, 255, 255, 0.1);
+/* ===========================
+   BUDGET TRACKER PAGE
+=========================== */
+.budget-container {
+  max-width: 900px;
+  margin: 3rem auto;
+  background: linear-gradient(145deg, #102540, #08172b);
+  padding: 2rem 2.5rem;
+  border-radius: 18px;
+  color: #e0e8f9;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-        align-items: center;
-    }
+.budget-container h2 {
+  text-align: center;
+  color: #4da6ff;
+  margin-bottom: 2rem;
+}
 
-    .nav-links {
-        flex-direction: column;
-        gap: 15px;
-        background: rgba(10, 25, 55, 0.95);
-        padding: 15px;
-        border-radius: 10px;
-    }
+.totals {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.total-box {
+  background: #0f2342;
+  padding: 1.2rem 1.8rem;
+  border-radius: 10px;
+  text-align: center;
+  width: 28%;
+  min-width: 220px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.total-box h3 {
+  color: #b8c4dd;
+}
+
+.total-box p {
+  font-size: 1.4rem;
+  color: #4da6ff;
+  margin-top: 0.5rem;
+}
+
+/* Transaction Form */
+.form-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+#transaction-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+#transaction-form input,
+#transaction-form select {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #4da6ff;
+  background: #0a1a2f;
+  color: #e0e8f9;
+}
+
+.transactions {
+  background: #0f2342;
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.transactions h3 {
+  margin-bottom: 0.8rem;
+  color: #4da6ff;
+}
+
+#transaction-list {
+  list-style: none;
+}
+
+#transaction-list li {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+}
+
+#transaction-list li span {
+  color: #b9c7e1;
+}
+
+.delete-btn {
+  background: #e74c3c;
+  border: none;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+}
+
+/* ===========================
+   CHART SECTION
+=========================== */
+.chart-section {
+  background: #0f2342;
+  padding: 1.2rem 1.8rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.chart-section canvas {
+  max-width: 250px;
+  max-height: 250px;
+  margin: auto;
+}
+
+.chart-section h3 {
+  color: #4da6ff;
+  margin-bottom: 1rem;
+}
+
+/* ===========================
+   AI SCANNER PAGES
+=========================== */
+.scanner-container {
+  max-width: 700px;
+  margin: 3rem auto;
+  background: linear-gradient(145deg, #122b4f, #0d1e38);
+  padding: 2rem 2.5rem;
+  border-radius: 18px;
+  text-align: center;
+  color: #e0e8f9;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+.scanner-container h2 {
+  color: #4da6ff;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.scanner-container p {
+  color: #b9c7e1;
+  margin-bottom: 1.5rem;
+}
+
+.upload-box input[type="file"] {
+  background: #0a1a2f;
+  color: #e0e8f9;
+  border: 1px solid #4da6ff;
+  padding: 0.6rem;
+  border-radius: 6px;
+  width: 70%;
+}
+
+.ai-output {
+  text-align: left;
+  margin-top: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  color: #d0dcf2;
+}
+
+/* ===========================
+   SMART FINANCE PLANNER
+=========================== */
+.planner-hero {
+  background: linear-gradient(135deg, #002B5B, #004AAD);
+  color: white;
+  text-align: center;
+  padding: 60px 20px;
+  border-radius: 0 0 40px 40px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.planner-hero h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.planner-hero p {
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: 1.1em;
+  opacity: 0.9;
+}
+
+.planner-main {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.planner-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 25px 30px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.planner-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.planner-card h2 {
+  color: #002B5B;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Goal Form */
+.goal-form input {
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: calc(50% - 10px);
+  margin-right: 10px;
+  font-size: 1em;
+}
+
+.goal-form .button {
+  background: #004AAD;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.goal-form .button:hover {
+  background: #002B5B;
+}
+
+/* Goal List */
+.goal-list {
+  list-style: none;
+  padding: 0;
+}
+
+.goal-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: #f7f9fc;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  border-left: 4px solid #004AAD;
+}
+
+.goal-list li:hover {
+  background: #e3f2fd;
+}
+
+/* Delete Button */
+.delete-btn {
+  background: #E74C3C;
+  border: none;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #C0392B;
+}
+
+/* Progress Bars */
+.progress-card {
+  background: #f9fbff;
+}
+
+.progress-bar {
+  background: #e3f2fd;
+  border-radius: 12px;
+  height: 18px;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #4CAF50;
+  width: 0%;
+  border-radius: 12px;
+  transition: width 0.6s ease-in-out;
+}
+
+/* AI Section */
+.ai-section {
+  background: #f9fbff;
+  border-left: 5px solid #004AAD;
+}
+
+.ai-section .button {
+  background: #0066CC;
+  color: white;
+  padding: 10px 25px;
+  border-radius: 10px;
+  border: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.ai-section .button:hover {
+  background: #004AAD;
+}
+
+.ai-output {
+  margin-top: 20px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  border-left: 4px solid #2196F3;
+  font-size: 1em;
+  line-height: 1.6;
+  color: #333;
+}
+
+.placeholder-text {
+  color: #888;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Rewards System */
+.rewards-card,
+.how-to-earn,
+.rewards-info {
+  background: #f7f9fc;
+  border-left: 4px solid #4da6ff;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.badge-list {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.badge-list li {
+  background: #004AAD;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.9em;
+}
+
+.earn-rules,
+.reward-rules {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 10px;
+}
+
+.earn-rules li,
+.reward-rules li {
+  margin-bottom: 8px;
+  font-size: 1em;
+  color: #333;
 }
