@@ -10,7 +10,7 @@
 
 body {
   background-color: #0a1a2f;
-  color: #e0e8f9;
+  color: #000000;
   line-height: 1.6;
   overflow-x: hidden;
 }
@@ -303,85 +303,204 @@ body {
   background: rgba(255, 255, 255, 0.05);
   padding: 1rem 1.5rem;
   border-radius: 10px;
-  color: #d0dcf2;
+  color: #000000;
 }
 
 /* ===========================
-   SMART FINANCE PLANNER
+   SMART FINANCE PLANNER (from SmartPlanner.html)
+   Consolidated here so the page and global stylesheet share the same design.
 =========================== */
 .planner-hero {
-  background: linear-gradient(135deg, #002B5B, #004AAD);
+  background: linear-gradient(145deg, #0f2a4a, #08172b);
   color: white;
   text-align: center;
-  padding: 60px 20px;
-  border-radius: 0 0 40px 40px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  padding: 4rem 1rem;
 }
 
 .planner-hero h1 {
-  font-size: 2.5em;
-  margin-bottom: 10px;
+  font-size: 2.4rem;
+  color: #4da6ff;
+  margin-bottom: 1rem;
 }
 
 .planner-hero p {
+  color: #b8c4dd;
+  font-size: 1.1rem;
   max-width: 700px;
   margin: 0 auto;
-  font-size: 1.1em;
-  opacity: 0.9;
 }
 
 .planner-main {
   max-width: 900px;
-  margin: 40px auto;
-  padding: 0 20px;
+  margin: 3rem auto;
+  padding: 0 1rem;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 2rem;
 }
 
 .planner-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 25px 30px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: linear-gradient(145deg, #102540, #08172b);
+  border-radius: 18px;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+  transition: transform 0.2s ease;
 }
 
 .planner-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
 }
 
 .planner-card h2 {
-  color: #002B5B;
-  margin-bottom: 20px;
+  color: #4da6ff;
+  margin-bottom: 1.5rem;
   font-size: 1.5em;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* Goal Form */
-.goal-form input {
-  padding: 10px 15px;
+.planner-card h3 {
+  color: #4da6ff;
+  margin-top: 1.5rem;
+}
+
+/* Reward Card - Special Gradient */
+.rewards-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.rewards-card h2,
+.rewards-card h3 {
+  color: white !important;
+}
+
+.reward-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  margin: 10px 0;
+  backdrop-filter: blur(10px);
+}
+
+.reward-stat strong {
+  font-size: 1.1em;
+}
+
+.reward-stat span {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+  margin-top: 15px;
+}
+
+.badge-list li {
+  background: rgba(255,255,255,0.2);
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  backdrop-filter: blur(10px);
+}
+
+.reward-progress {
+  background: rgba(255,255,255,0.2);
+  height: 30px;
+  border-radius: 15px;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+.reward-progress-bar {
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  height: 100%;
+  transition: width 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.reward-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.reward-btn {
+  flex: 1;
+  min-width: 150px;
+  padding: 12px 20px;
+  background: white;
+  color: #667eea;
+  border: none;
   border-radius: 8px;
-  border: 1px solid #ccc;
-  width: calc(50% - 10px);
-  margin-right: 10px;
-  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.reward-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+}
+
+/* Goal Form */
+.goal-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.goal-form input {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #4da6ff;
+  background: #0a1a2f;
+  color: #e0e8f9;
+  font-size: 1rem;
+}
+
+.goal-form input::placeholder {
+  color: #b8c4dd;
+}
+
+.goal-form input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
 }
 
 .goal-form .button {
-  background: #004AAD;
+  background: #4da6ff;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 0.8rem 1.5rem;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
 }
 
 .goal-form .button:hover {
-  background: #002B5B;
+  background: #1a8cff;
+  transform: translateY(-2px);
 }
 
 /* Goal List */
@@ -394,125 +513,178 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 15px;
-  background: #f7f9fc;
-  margin-bottom: 8px;
+  padding: 1rem;
+  background: #0f2342;
+  margin-bottom: 0.8rem;
   border-radius: 10px;
-  border-left: 4px solid #004AAD;
+  border-left: 4px solid #4da6ff;
+  color: #e0e8f9;
 }
 
 .goal-list li:hover {
-  background: #e3f2fd;
+  background: #12315c;
 }
 
-/* Delete Button */
-.delete-btn {
-  background: #E74C3C;
-  border: none;
-  color: white;
-  padding: 5px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.delete-btn:hover {
-  background: #C0392B;
-}
-
-/* Progress Bars */
+/* Progress Card */
 .progress-card {
-  background: #f9fbff;
+  background: linear-gradient(145deg, #102540, #08172b);
+}
+
+#goal-progress-container p {
+  color: #e0e8f9;
+  margin-bottom: 0.5rem;
 }
 
 .progress-bar {
-  background: #e3f2fd;
+  background: rgba(77, 166, 255, 0.2);
   border-radius: 12px;
-  height: 18px;
-  margin: 8px 0;
+  height: 20px;
+  margin: 8px 0 20px 0;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: #4CAF50;
-  width: 0%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
   border-radius: 12px;
   transition: width 0.6s ease-in-out;
 }
 
 /* AI Section */
 .ai-section {
-  background: #f9fbff;
-  border-left: 5px solid #004AAD;
+  background: linear-gradient(145deg, #102540, #08172b);
+  border-left: 5px solid #667eea;
+}
+
+.ai-intro {
+  color: #b9c7e1;
+  margin-bottom: 1.5rem;
 }
 
 .ai-section .button {
-  background: #0066CC;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 10px 25px;
+  padding: 12px 25px;
   border-radius: 10px;
   border: none;
   font-weight: bold;
-  transition: 0.3s;
+  transition: all 0.3s;
 }
 
 .ai-section .button:hover {
-  background: #004AAD;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
 .ai-output {
   margin-top: 20px;
   padding: 20px;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  border-left: 4px solid #2196F3;
+  border-left: 4px solid #4da6ff;
   font-size: 1em;
   line-height: 1.6;
-  color: #333;
+  color: #d0dcf2;
 }
 
 .placeholder-text {
-  color: #888;
+  color: #b8c4dd;
   text-align: center;
   font-style: italic;
 }
 
-/* Rewards System */
-.rewards-card,
-.how-to-earn,
-.rewards-info {
-  background: #f7f9fc;
-  border-left: 4px solid #4da6ff;
-  padding: 20px;
-  border-radius: 12px;
+/* How to Earn / Rewards Info */
+.how-to-earn, .rewards-info {
+  background: linear-gradient(145deg, #102540, #08172b);
+  border-left: 4px solid #667eea;
 }
 
-.badge-list {
+.earn-rules, .reward-rules {
   list-style: none;
-  padding-left: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  padding: 0;
 }
 
-.badge-list li {
-  background: #004AAD;
-  color: white;
-  padding: 8px 12px;
+.earn-rules li, .reward-rules li {
+  padding: 12px 15px;
+  margin: 8px 0;
+  background: #0f2342;
   border-radius: 8px;
-  font-size: 0.9em;
+  border-left: 3px solid #4CAF50;
+  color: #e0e8f9;
+  transition: all 0.3s;
 }
 
-.earn-rules,
-.reward-rules {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 10px;
+.earn-rules li:hover, .reward-rules li:hover {
+  background: #12315c;
+  transform: translateX(5px);
 }
 
-.earn-rules li,
-.reward-rules li {
-  margin-bottom: 8px;
-  font-size: 1em;
-  color: #333;
+.earn-rules li strong, .reward-rules li strong {
+  color: #4da6ff;
+}
+
+/* Delete Button */
+.delete-btn {
+  background: #e74c3c;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .planner-card {
+    padding: 1.5rem;
+  }
+
+  .reward-actions {
+    flex-direction: column;
+  }
+  
+  .reward-btn {
+    width: 100%;
+  }
+
+  .goal-form {
+    flex-direction: column;
+  }
+
+  .goal-form input {
+    width: 100%;
+  }
+}
+
+/* ===========================
+   Reward UI helper styles
+   Minor styles used by reward.js (notifications)
+=========================== */
+.reward-notification {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  z-index: 9999;
+  font-weight: 600;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(400px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }

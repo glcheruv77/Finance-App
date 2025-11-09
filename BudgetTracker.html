@@ -15,10 +15,10 @@
     <div class="logo">AI Finance Manager</div>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
-      <li><a href="BudgetTracker.html">Budget Tracker</a></li>
+      <li><a href="BudgetTracker.html" class="active">Budget Tracker</a></li>
       <li><a href="ReceiptScanner.html">Receipt Reader</a></li>
       <li><a href="PDFScanner.html">PDF Scanner</a></li>
-      <li><a href="SmartPlanner.html" class="active">Smart Planner</a></li>
+      <li><a href="SmartPlanner.html">Smart Planner</a></li>
     </ul>
   </nav>
 
@@ -29,29 +29,42 @@
     <div class="totals">
       <div class="total-box income-box">
         <h3><i class="fa-solid fa-arrow-up"></i> Income</h3>
-        <p id="total-income">$0</p>
+        <p id="total-income">$0.00</p>
       </div>
       <div class="total-box expense-box">
         <h3><i class="fa-solid fa-arrow-down"></i> Expenses</h3>
-        <p id="total-expense">$0</p>
+        <p id="total-expense">$0.00</p>
       </div>
       <div class="total-box balance-box">
         <h3><i class="fa-solid fa-scale-balanced"></i> Balance</h3>
-        <p id="balance">$0</p>
+        <p id="balance">$0.00</p>
       </div>
     </div>
 
     <!-- Add Transaction Form -->
     <div class="form-section">
-      <h3>Add a Transaction</h3>
+      <h3>Add a Transaction <small style="color:#4da6ff;">(Earn +2-5 points!)</small></h3>
       <form id="transaction-form">
         <input type="text" id="description" placeholder="Description" required>
-        <input type="number" id="amount" placeholder="Amount ($)" required>
+        <input type="number" id="amount" step="0.01" placeholder="Amount ($)" required>
         <select id="type" required>
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
+          <option value="income">Income (+5 pts)</option>
+          <option value="expense">Expense (+2 pts)</option>
         </select>
-        <button type="submit" class="button">Add Transaction</button>
+        <select id="category">
+          <option value="food">🍔 Food</option>
+          <option value="transport">🚗 Transport</option>
+          <option value="housing">🏠 Housing</option>
+          <option value="entertainment">🎮 Entertainment</option>
+          <option value="healthcare">⚕️ Healthcare</option>
+          <option value="shopping">🛍️ Shopping</option>
+          <option value="utilities">💡 Utilities</option>
+          <option value="salary">💰 Salary</option>
+          <option value="other">📦 Other</option>
+        </select>
+        <button type="submit" class="button">
+          <i class="fa-solid fa-plus"></i> Add Transaction
+        </button>
       </form>
     </div>
 
@@ -72,6 +85,8 @@
     <p>© 2025 AI Finance Manager | Built with 💙 for smarter finances</p>
   </footer>
 
+  <!-- IMPORTANT: Load reward.js BEFORE main.js -->
+  <script src="reward.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

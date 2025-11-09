@@ -1,70 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Finance Manager</title>
+  <meta charset="UTF-8">
+  <title>AI Finance Manager | Smarter Finance as a Service</title>
+  <link rel="stylesheet" href="styling.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-  <link rel="stylesheet" href="styling.css" />
+  <style>
+    /* Landing Page Styling */
+    .hero-section {
+      background: linear-gradient(135deg, #e8f3ff, #dce8ff);
+      text-align: center;
+      padding: 100px 20px;
+      color: #0a1a2f;
+    }
+    .hero-section h1 {
+      font-size: 2.8rem;
+      color: #004aad;
+      margin-bottom: 15px;
+    }
+    .hero-section p {
+      font-size: 1.2rem;
+      color: #333;
+      max-width: 700px;
+      margin: 0 auto 30px;
+    }
+    .hero-btns {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .cta-btn {
+      background: #004aad;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      text-decoration: none;
+    }
+    .cta-btn:hover {
+      background: #002b5b;
+      transform: translateY(-2px);
+    }
+
+    .features {
+      max-width: 1000px;
+      margin: 60px auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 25px;
+      padding: 0 20px;
+    }
+    .feature-card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px 25px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: 0.3s;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+    .feature-card i {
+      color: #004aad;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    .feature-card h3 {
+      color: #002b5b;
+      margin-bottom: 10px;
+    }
+    .feature-card p {
+      color: #444;
+      font-size: 0.95rem;
+    }
+
+    .pricing {
+      background: linear-gradient(135deg, #f0f7ff, #e6f0ff);
+      padding: 80px 20px;
+      text-align: center;
+    }
+    .pricing h2 {
+      color: #004aad;
+      margin-bottom: 20px;
+    }
+    .pricing-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 40px;
+    }
+    .plan {
+      background: white;
+      border-radius: 12px;
+      padding: 25px 30px;
+      width: 280px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      transition: 0.3s;
+    }
+    .plan:hover {
+      transform: translateY(-4px);
+    }
+    .plan h3 {
+      color: #004aad;
+      margin-bottom: 10px;
+    }
+    .plan ul {
+      list-style: none;
+      text-align: left;
+      margin-top: 15px;
+    }
+    .plan li {
+      padding: 6px 0;
+      color: #333;
+    }
+    .plan .price {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #004aad;
+      margin-top: 15px;
+    }
+  </style>
 </head>
 <body>
-  <!-- Navbar -->
   <nav class="navbar">
     <div class="logo">AI Finance Manager</div>
     <ul class="nav-links">
       <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="BudgetTracker.html">Budget Tracker</a></li>
-      <li><a href="ReceiptScanner.html">Receipt Reader</a></li>
-      <li><a href="PDFScanner.html">PDF Scanner</a></li>
       <li><a href="SmartPlanner.html">Smart Planner</a></li>
+      <li><a href="BudgetTracker.html">Dashboard</a></li>
+      <li><a href="login.html">Login</a></li>
     </ul>
   </nav>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <h2>Welcome to Your AI Finance Manager</h2>
-    <p>Manage your budget, analyze receipts, and plan your financial goals with AI-driven insights.</p>
+  <section class="hero-section">
+    <h1>Smarter Finance, Simplified.</h1>
+    <p>AI Finance Manager is your personal finance copilot — helping you budget, save, and reach your goals with intelligent insights.</p>
+    <div class="hero-btns">
+      <a href="login.html" class="cta-btn">Get Started Free</a>
+      <a href="SmartPlanner.html" class="cta-btn" style="background:#4CAF50;">Try the Smart Planner</a>
+    </div>
   </section>
 
-  <!-- Main Container -->
-  <main class="container">
-    <!-- Budget Tracker -->
-    <div class="box">
-      <i class="fa-solid fa-wallet fa-3x" aria-hidden="true"></i>
-      <h2>Budget Tracker</h2>
-      <p>Track income and expenses with real-time updates and analytics.</p>
-      <a href="BudgetTracker.html" class="button">Go</a>
+  <section class="features">
+    <div class="feature-card">
+      <i class="fa-solid fa-bullseye"></i>
+      <h3>AI Smart Planner</h3>
+      <p>Automatically generate realistic financial goals and get AI-driven insights to stay on track.</p>
     </div>
-
-    <!-- Receipt Scanner -->
-    <div class="box">
-      <i class="fa-solid fa-receipt fa-3x" aria-hidden="true"></i>
-      <h2>AI Receipt Reader</h2>
-      <p>Upload receipt images and let AI extract your transaction totals.</p>
-      <a href="ReceiptScanner.html" class="button">Go</a>
+    <div class="feature-card">
+      <i class="fa-solid fa-receipt"></i>
+      <h3>Receipt & PDF Reader</h3>
+      <p>Scan and extract totals automatically from invoices or bank statements using OCR and PDF AI.</p>
     </div>
-
-    <!-- PDF Scanner -->
-    <div class="box">
-      <i class="fa-solid fa-file-pdf fa-3x" aria-hidden="true"></i>
-      <h2>PDF Scanner</h2>
-      <p>Upload statements and extract text using smart PDF processing.</p>
-      <a href="PDFScanner.html" class="button">Go</a>
+    <div class="feature-card">
+      <i class="fa-solid fa-chart-pie"></i>
+      <h3>Visual Budget Tracker</h3>
+      <p>Track income and expenses visually with dynamic charts, and let AI identify spending patterns.</p>
     </div>
+  </section>
 
-    <!-- Smart Planner -->
-    <div class="box">
-      <i class="fa-solid fa-lightbulb fa-3x" aria-hidden="true"></i>
-      <h2>Smart Planner</h2>
-      <p>Use AI to set goals, analyze spending, and plan smarter finances.</p>
-      <a href="SmartPlanner.html" class="button">Go</a>
+  <section class="pricing">
+    <h2>Plans that Grow with You</h2>
+    <div class="pricing-cards">
+      <div class="plan">
+        <h3>Free Plan</h3>
+        <p>Get started at no cost</p>
+        <ul>
+          <li>✓ Expense & Income Tracking</li>
+          <li>✓ 5 AI scans per month</li>
+          <li>✓ Smart Planner Access</li>
+        </ul>
+        <p class="price">$0/mo</p>
+      </div>
+      <div class="plan">
+        <h3>Pro Plan</h3>
+        <p>For dedicated savers</p>
+        <ul>
+          <li>✓ Unlimited AI Scans</li>
+          <li>✓ Cloud Sync + Analytics</li>
+          <li>✓ Advanced AI Insights</li>
+        </ul>
+        <p class="price">$7.99/mo</p>
+      </div>
+      <div class="plan">
+        <h3>Enterprise</h3>
+        <p>For financial advisors</p>
+        <ul>
+          <li>✓ Team Dashboards</li>
+          <li>✓ API Integrations</li>
+          <li>✓ Custom Reporting</li>
+        </ul>
+        <p class="price">Contact Us</p>
+      </div>
     </div>
-  </main>
+  </section>
 
-  <!-- Footer -->
   <footer>
-    <p>© 2025 AI Finance Manager | Built with 💙 for smarter finances</p>
+    <p>© 2025 AI Finance Manager | Finance-as-a-Service for Everyone</p>
   </footer>
 </body>
 </html>

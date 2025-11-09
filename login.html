@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | AI Finance Manager</title>
+  <link rel="stylesheet" href="styling.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #e8f3ff, #dce8ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #002b5b;
+      font-family: "Poppins", sans-serif;
+    }
+    .auth-box {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      width: 350px;
+      text-align: center;
+    }
+    .auth-box h2 {
+      color: #004aad;
+      margin-bottom: 25px;
+    }
+    .auth-box input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    .auth-box button {
+      width: 100%;
+      background: #004aad;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .auth-box button:hover {
+      background: #002b5b;
+    }
+    .auth-box p {
+      margin-top: 15px;
+      font-size: 0.9em;
+      color: #444;
+    }
+    .auth-box a {
+      color: #004aad;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .auth-box a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-box">
+    <h2>Welcome Back</h2>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button id="login-btn">Log In</button>
+    <p>Don't have an account? <a href="#" id="signup-link">Sign Up</a></p>
+  </div>
+
+  <script>
+    // Future Firebase Auth logic placeholder
+    document.getElementById('signup-link').addEventListener('click', () => {
+      alert('Signup feature coming soon — backend integration in next update!');
+    });
+  </script>
+</body>
+</html>
