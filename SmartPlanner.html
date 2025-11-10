@@ -5,7 +5,131 @@
   <title>Smart Finance Planner | AI Finance Manager</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
   <link rel="stylesheet" href="styling.css">
-  
+  <style>
+    /* Light Theme Adjustments for Smart Planner */
+    .planner-hero {
+      background: linear-gradient(145deg, #e9f3ff, #ffffff);
+      color: #2d3e50;
+      text-align: center;
+      padding: 4rem 1rem;
+      border-bottom: 2px solid #dce3ef;
+    }
+
+    .planner-hero h1 {
+      font-size: 2.4rem;
+      color: #0078d7;
+      margin-bottom: 1rem;
+    }
+
+    .planner-hero p {
+      color: #4a5d73;
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .rewards-card {
+      background: linear-gradient(135deg, #e3f0ff, #ffffff);
+      color: #2d3e50;
+      border-left: 5px solid #0078d7;
+    }
+
+    .reward-stat {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px;
+      background: #f5f8fd;
+      border-radius: 10px;
+      margin: 10px 0;
+      border: 1px solid #e3e8ef;
+    }
+
+    .reward-stat strong {
+      color: #2d3e50;
+    }
+
+    .reward-stat span {
+      font-weight: bold;
+      color: #0078d7;
+    }
+
+    .reward-progress {
+      background: #e9f3ff;
+      height: 25px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .reward-progress-bar {
+      background: linear-gradient(90deg, #0078d7, #00b4d8);
+      height: 100%;
+      color: white;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      transition: width 0.6s ease;
+    }
+
+    .badge-list li {
+      background: #f0f6ff;
+      color: #2d3e50;
+      border-radius: 20px;
+      padding: 8px 15px;
+    }
+
+    .reward-btn {
+      background: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .reward-btn:hover {
+      background: #005fa3;
+    }
+
+    .how-to-earn,
+    .rewards-info {
+      background: #ffffff;
+      border-left: 4px solid #0078d7;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .earn-rules li,
+    .reward-rules li {
+      background: #f9fbfd;
+      color: #2d3e50;
+      border-left: 4px solid #4caf50;
+    }
+
+    .earn-rules li strong,
+    .reward-rules li strong {
+      color: #0078d7;
+    }
+
+    .ai-section {
+      background: #f9fbfd;
+      border-left: 5px solid #0078d7;
+    }
+
+    .ai-section .button {
+      background: #0078d7;
+      color: white;
+    }
+
+    .ai-output {
+      background: #ffffff;
+      border-left: 4px solid #0078d7;
+      color: #2d3e50;
+    }
+  </style>
 </head>
 <body>
   <!-- Navbar -->
@@ -23,150 +147,94 @@
   <!-- Hero -->
   <section class="planner-hero">
     <h1>🧠 Smart Finance Planner</h1>
-    <p>Set goals, track progress, earn rewards, and let AI guide your financial journey.</p>
+    <p>Set goals, earn rewards, and let AI guide your financial growth.</p>
   </section>
 
   <main class="planner-main">
-    <!-- 🏆 Rewards Dashboard -->
+    <!-- Rewards Dashboard -->
     <div class="planner-card rewards-card">
       <h2><i class="fa-solid fa-trophy"></i> Your Rewards Dashboard</h2>
-      
-      <div class="reward-stat">
-        <strong>👤 Username:</strong>
-        <span id="reward-username">Loading...</span>
-      </div>
-      
-      <div class="reward-stat">
-        <strong>⭐ Points:</strong>
-        <span id="reward-points">0</span>
-      </div>
-      
-      <div class="reward-stat">
-        <strong>🎖️ Level:</strong>
-        <span id="reward-level">Bronze</span>
-      </div>
-      
-      <div class="reward-stat">
-        <strong>💰 Cash Back Available:</strong>
-        <span>$<span id="reward-cashback">0.00</span></span>
-      </div>
-
+      <div class="reward-stat"><strong>👤 Username:</strong><span id="reward-username">Loading...</span></div>
+      <div class="reward-stat"><strong>⭐ Points:</strong><span id="reward-points">0</span></div>
+      <div class="reward-stat"><strong>🎖️ Level:</strong><span id="reward-level">Bronze</span></div>
+      <div class="reward-stat"><strong>💰 Cash Back:</strong><span>$<span id="reward-cashback">0.00</span></span></div>
       <div>
-        <strong style="display:block;margin:15px 0 5px 0;">Progress to Next Level:</strong>
+        <strong>Progress to Next Level:</strong>
         <div class="reward-progress">
           <div class="reward-progress-bar" id="reward-progress-bar" style="width: 0%;">
             <span id="next-level-points">0 points to next level</span>
           </div>
         </div>
       </div>
-      
-      <div>
-        <h3 style="margin:20px 0 10px 0;">🏆 Your Badges</h3>
-        <ul id="reward-badges" class="badge-list">
-          <li>No badges yet - start earning!</li>
-        </ul>
-      </div>
-
+      <h3>🏅 Badges</h3>
+      <ul id="reward-badges" class="badge-list">
+        <li>No badges yet - start earning!</li>
+      </ul>
       <div class="reward-actions">
-        <button class="reward-btn" id="redeem-cashback-btn">
-          <i class="fa-solid fa-coins"></i> Redeem Cash Back
-        </button>
-        <button class="reward-btn" id="change-username-btn">
-          <i class="fa-solid fa-user-pen"></i> Change Username
-        </button>
+        <button class="reward-btn" id="redeem-cashback-btn"><i class="fa-solid fa-coins"></i> Redeem Cash Back</button>
+        <button class="reward-btn" id="change-username-btn"><i class="fa-solid fa-user-pen"></i> Change Username</button>
       </div>
     </div>
 
-    <!-- Goal Tracker -->
+    <!-- Financial Goals -->
     <div class="planner-card">
       <h2><i class="fa-solid fa-bullseye"></i> Financial Goals</h2>
       <form id="goal-form" class="goal-form">
         <input type="text" id="goal-name" placeholder="Goal Name (e.g., Emergency Fund)" required>
         <input type="number" id="goal-amount" placeholder="Target Amount ($)" required step="0.01">
-        <button type="submit" class="button">
-          <i class="fa-solid fa-plus"></i> Add Goal
-        </button>
+        <button type="submit" class="button"><i class="fa-solid fa-plus"></i> Add Goal</button>
       </form>
       <ul id="goals" class="goal-list"></ul>
     </div>
 
-    <!-- Progress Summary -->
+    <!-- Goal Progress -->
     <div class="planner-card progress-card">
       <h2><i class="fa-solid fa-chart-pie"></i> Goal Progress Overview</h2>
       <div id="goal-progress-container"></div>
     </div>
 
-    <!-- AI Planner -->
+    <!-- AI Insights -->
     <div class="planner-card ai-section">
-      <h2><i class="fa-solid fa-robot"></i> AI Smart Financial Insights</h2>
-      <p class="ai-intro">
-        AI reviews your spending, income, and goals to recommend personalized financial strategies.
-      </p>
-      <button id="analyze-finances" class="button">
-        <i class="fa-solid fa-sparkles"></i> Generate AI Plan (+20 points)
-      </button>
+      <h2><i class="fa-solid fa-robot"></i> AI Financial Insights</h2>
+      <p>AI analyzes your spending, income, and goals to create a tailored financial plan.</p>
+      <button id="analyze-finances" class="button"><i class="fa-solid fa-sparkles"></i> Generate AI Plan</button>
       <div id="ai-analysis-output" class="ai-output">
-        <p class="placeholder-text">Click "Generate AI Plan" to get your personalized financial strategy and earn points!</p>
+        <p class="placeholder-text">Click “Generate AI Plan” to see your insights.</p>
       </div>
     </div>
 
-    <!-- How to Earn Points -->
+    <!-- Earning Rules -->
     <div class="planner-card how-to-earn">
       <h2><i class="fa-solid fa-circle-info"></i> How to Earn Points</h2>
       <ul class="earn-rules">
-        <li>📝 <strong>Track expenses:</strong> +2 points per transaction</li>
-        <li>💵 <strong>Record income:</strong> +5 points</li>
-        <li>🎯 <strong>Create a goal:</strong> +10 points</li>
-        <li>✅ <strong>Complete a goal:</strong> +50 points</li>
-        <li>📸 <strong>Scan receipts:</strong> +5 points per scan</li>
-        <li>📄 <strong>Scan PDFs:</strong> +5 points per scan</li>
-        <li>🧠 <strong>Use AI Planner:</strong> +20 points</li>
-        <li>📅 <strong>Daily login:</strong> +5 points</li>
-        <li>💪 <strong>7-day streak:</strong> +50 bonus points</li>
-        <li>💰 <strong>Save 20%+ of income:</strong> +10 points</li>
+        <li>📝 Track expenses: +2 pts</li>
+        <li>💵 Record income: +5 pts</li>
+        <li>🎯 Create a goal: +10 pts</li>
+        <li>✅ Complete a goal: +50 pts</li>
+        <li>📸 Scan receipts: +5 pts</li>
+        <li>📄 Scan PDFs: +5 pts</li>
+        <li>🧠 Use AI Planner: +20 pts</li>
+        <li>📅 Daily login: +5 pts</li>
       </ul>
     </div>
 
-    <!-- Rewards & Levels -->
+    <!-- Rewards Levels -->
     <div class="planner-card rewards-info">
       <h2><i class="fa-solid fa-gift"></i> Rewards & Levels</h2>
       <ul class="reward-rules">
-        <li>🥉 <strong>Bronze</strong> (0–99 pts): Welcome rewards, basic insights</li>
-        <li>🥈 <strong>Silver</strong> (100–499 pts): Streak tracking, enhanced analytics</li>
-        <li>🥇 <strong>Gold</strong> (500–999 pts): Goal suggestions, priority badges</li>
-        <li>💎 <strong>Platinum</strong> (1000+ pts): Full dashboard, bonus cash back</li>
+        <li>🥉 Bronze (0–99 pts)</li>
+        <li>🥈 Silver (100–499 pts)</li>
+        <li>🥇 Gold (500–999 pts)</li>
+        <li>💎 Platinum (1000+ pts)</li>
       </ul>
-      <div style="margin-top:20px;padding:15px;background:white;border-radius:8px;border-left:4px solid #4CAF50;">
-        <strong>💰 Cash Back:</strong> Earn $0.05 per point! Minimum 100 points to redeem.
-      </div>
     </div>
   </main>
-  <!-- Bank Connections -->
-  <div class="planner-card bank-card">
-    <h2><i class="fa-solid fa-building-columns"></i> Linked Accounts</h2>
-    <p>Securely link your bank and credit cards to track balances and transactions automatically.</p>
-    
-    <button id="link-bank-btn" class="button">
-      <i class="fa-solid fa-link"></i> Connect Bank Account
-    </button>
-
-    <ul id="linked-accounts" class="goal-list" style="margin-top:1rem;">
-      <li>No accounts linked yet</li>
-    </ul>
-  </div>
-  <button class="button" onclick="connectBank()">🏦 Connect Bank Account</button>
-
-
-  <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-
 
   <footer>
     <p>© 2025 AI Finance Manager | Built with 💙 for smarter finances</p>
   </footer>
 
-  <!-- Load reward system first -->
   <script src="reward.js"></script>
-  <!-- Then load main app -->
   <script src="main.js"></script>
 </body>
 </html>

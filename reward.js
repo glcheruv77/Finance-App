@@ -1,358 +1,6 @@
 /* ==========================================================
-   reward.js — Standalone Reward System (clean)
-   - Wrapped in an IIFE to avoid global pollution
-   - Exposes a small `Rewards` API on window for external use
-   - Preserves original behavior and localStorage compatibility
-========================================================== */
-
-(function (window) {
-  'use strict';
-
-  // --- Utilities -------------------------------------------------
-  const safeParse = (key, def) => {
-    try {
-      const v = localStorage.getItem(key);
-      return v ? JSON.parse(v) : def;
-    } catch (e) {
-      console.warn(`reward.js: failed to parse ${key}`, e);
-      return def;
-    }
-  };
-
-  const save = (key, value) => {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (e) {
-      console.warn('reward.js: failed to save to localStorage', e);
-    }
-  };
-
-  const defaultUser = () => ({
-    username: 'User',
-    points: 0,
-    badges: [],
-    level: 'Bronze',
-    joinDate: new Date().toISOString()
-  });
-
-  // --- State -----------------------------------------------------
-  let rewardUser = null;
-
-  // --- Core reward logic ----------------------------------------
-  function calculateLevel(points) {
-    if (points >= 1000) return 'Platinum';
-    if (points >= 500) return 'Gold';
-    if (points >= 100) return 'Silver';
-    return 'Bronze';
-  }
-
-  // returns numeric cash back (not formatted string)
-  function calculateCashBack(points) {
-    return Number((points * 0.05).toFixed(2));
-  }
-
-  function getLevelColor(level) {
-    const colors = {
-      Bronze: '#cd7f32',
-      Silver: '#c0c0c0',
-      Gold: '#ffd700',
-      Platinum: '#e5e4e2'
-    };
-    return colors[level] || colors.Bronze;
-  }
-
-  function persistUser() {
-    save('rewardUser', rewardUser);
-  }
-
-  function addRewardPoints(points, reason) {
-    if (!rewardUser) return;
-    rewardUser.points = (rewardUser.points || 0) + Number(points || 0);
-    rewardUser.level = calculateLevel(rewardUser.points);
-    persistUser();
-
-    showRewardNotification(`+${points} points! ${reason}`);
-    updateRewardsUI();
-  }
-
-  function awardBadge(badgeName) {
-    if (!rewardUser) return;
-    if (!rewardUser.badges.includes(badgeName)) {
-      rewardUser.badges.push(badgeName);
-      persistUser();
-      showRewardNotification(`🏆 New Badge: ${badgeName}!`);
-      updateRewardsUI();
-    }
-  }
-
-  // --- Reward triggers (kept behaviour) -------------------------
-  function rewardForTransaction(amount, type) {
-    if (!type) return;
-
-    if (type === 'expense') {
-      addRewardPoints(2, 'Expense tracked');
-      const transactions = safeParse('transactions', []);
-      if (transactions.length === 1) {
-        awardBadge('First Steps');
-        addRewardPoints(10, 'First transaction');
-      }
-    } else if (type === 'income') {
-      addRewardPoints(5, 'Income recorded');
-      const transactions = safeParse('transactions', []);
-      const incomeCount = transactions.filter(t => t.type === 'income').length;
-      if (incomeCount === 1) {
-        awardBadge('Money Maker');
-        addRewardPoints(10, 'First income recorded');
-      }
-    }
-  }
-
-  function rewardForSaving(balance, income) {
-    if (balance > 0 && income > 0) {
-      const savingsPercent = (balance / income) * 100;
-      if (savingsPercent >= 20) {
-        addRewardPoints(10, 'Saving 20%+');
-        awardBadge('Smart Saver');
-      } else if (savingsPercent >= 10) {
-        addRewardPoints(5, 'Saving 10%+');
-      }
-    }
-  }
-
-  function rewardForGoalCompletion(goalName) {
-    addRewardPoints(50, `Goal completed: ${goalName}`);
-    awardBadge('Goal Crusher');
-  }
-
-  function rewardForGoalCreation() {
-    addRewardPoints(10, 'Goal created');
-    const goals = safeParse('goals', []);
-    if (goals.length === 1) awardBadge('Goal Setter');
-  }
-
-  function rewardForScanning(type) {
-    if (type === 'receipt') {
-      addRewardPoints(5, 'Receipt scanned');
-      awardBadge('Scanner Pro');
-    } else if (type === 'pdf') {
-      addRewardPoints(5, 'PDF scanned');
-      awardBadge('PDF Master');
-    }
-    checkScanningStreak();
-  }
-
-  function rewardForAIUsage() {
-    addRewardPoints(20, 'AI planner used');
-    awardBadge('AI Explorer');
-  }
-
-  function rewardForDailyLogin() {
-    const lastLogin = localStorage.getItem('lastRewardLogin');
-    const today = new Date().toDateString();
-    if (lastLogin !== today) {
-      addRewardPoints(5, 'Daily login');
-      localStorage.setItem('lastRewardLogin', today);
-      checkLoginStreak();
-    }
-  }
-
-  // --- Streaks --------------------------------------------------
-  function checkLoginStreak() {
-    const streak = parseInt(localStorage.getItem('loginStreak')) || 0;
-    const newStreak = streak + 1;
-    localStorage.setItem('loginStreak', newStreak);
-    if (newStreak === 7) {
-      awardBadge('Week Warrior');
-      addRewardPoints(50, '7-day streak');
-    } else if (newStreak === 30) {
-      awardBadge('Month Master');
-      addRewardPoints(200, '30-day streak');
-    }
-  }
-
-  function checkScanningStreak() {
-    const scans = parseInt(localStorage.getItem('totalScans')) || 0;
-    const newScans = scans + 1;
-    localStorage.setItem('totalScans', newScans);
-    if (newScans === 10) {
-      awardBadge('Scan Expert');
-      addRewardPoints(25, '10 scans completed');
-    } else if (newScans === 50) {
-      awardBadge('Scan Legend');
-      addRewardPoints(100, '50 scans completed');
-    }
-  }
-
-  // --- UI helpers -----------------------------------------------
-  function getNextLevelPoints(currentLevel) {
-    const levels = { Bronze: 100, Silver: 500, Gold: 1000, Platinum: 999999 };
-    return levels[currentLevel] || 100;
-  }
-
-  function getPrevLevelPoints(currentLevel) {
-    const levels = { Bronze: 0, Silver: 100, Gold: 500, Platinum: 1000 };
-    return levels[currentLevel] || 0;
-  }
-
-  function updateRewardsUI() {
-    if (!rewardUser) return;
-    const el = id => document.getElementById(id);
-    const usernameEl = el('reward-username');
-    if (usernameEl) usernameEl.textContent = rewardUser.username || 'User';
-
-    const pointsEl = el('reward-points');
-    if (pointsEl) pointsEl.textContent = rewardUser.points || 0;
-
-    const levelEl = el('reward-level');
-    if (levelEl) {
-      levelEl.textContent = rewardUser.level || calculateLevel(rewardUser.points);
-      levelEl.style.color = getLevelColor(rewardUser.level);
-      levelEl.style.fontWeight = 'bold';
-    }
-
-    const cashbackEl = el('reward-cashback');
-    if (cashbackEl) cashbackEl.textContent = calculateCashBack(rewardUser.points).toFixed(2);
-
-    const badgesEl = el('reward-badges');
-    if (badgesEl) {
-      badgesEl.innerHTML = '';
-      if (!rewardUser.badges || rewardUser.badges.length === 0) {
-        badgesEl.innerHTML = '<li style="opacity:0.5;">No badges yet. Keep going!</li>';
-      } else {
-        rewardUser.badges.forEach(badge => {
-          const li = document.createElement('li');
-          li.textContent = `🏆 ${badge}`;
-          badgesEl.appendChild(li);
-        });
-      }
-    }
-
-    const progressBar = el('reward-progress-bar');
-    if (progressBar) {
-      const nextLevel = getNextLevelPoints(rewardUser.level);
-      const prevLevel = getPrevLevelPoints(rewardUser.level);
-      const denom = Math.max(1, nextLevel - prevLevel);
-      const progress = ((rewardUser.points - prevLevel) / denom) * 100;
-      progressBar.style.width = Math.min(100, Math.max(0, progress)) + '%';
-    }
-
-    const nextLevelEl = el('next-level-points');
-    if (nextLevelEl) {
-      const nextLevel = getNextLevelPoints(rewardUser.level);
-      const remaining = Math.max(0, nextLevel - (rewardUser.points || 0));
-      nextLevelEl.textContent = remaining > 0 ? `${remaining} points to next level` : 'Max level reached!';
-    }
-  }
-
-  function showRewardNotification(message) {
-    const notif = document.createElement('div');
-    notif.className = 'reward-notification';
-    notif.textContent = message;
-    notif.style.cssText = (
-      'position: fixed; top: 80px; right: 20px; ' +
-      'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; ' +
-      'padding: 12px 18px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); ' +
-      'z-index: 9999; animation: slideInRight 0.5s ease, fadeOut 0.5s ease 2.5s; font-weight: 600;'
-    );
-    document.body.appendChild(notif);
-    setTimeout(() => notif.remove(), 3000);
-  }
-
-  // --- Actions exposed ------------------------------------------------
-  function redeemCashBack() {
-    const cashback = calculateCashBack(rewardUser.points);
-    const points = rewardUser.points;
-    if (points < 100) {
-      alert('❌ You need at least 100 points to redeem cash back!');
-      return;
-    }
-    if (!confirm(`Redeem $${cashback.toFixed(2)} and reset ${points} points?`)) return;
-
-    rewardUser.points = 0;
-    rewardUser.level = 'Bronze';
-    persistUser();
-
-    const transactions = safeParse('transactions', []);
-    transactions.push({
-      description: 'Cash Back Redeemed',
-      amount: cashback,
-      type: 'income',
-      category: 'other',
-      date: new Date().toISOString()
-    });
-    save('transactions', transactions);
-
-    updateRewardsUI();
-    alert(`🎉 Success! $${cashback.toFixed(2)} has been added to your budget as income!`);
-    if (typeof window.updateBudgetUI === 'function') window.updateBudgetUI();
-  }
-
-  function changeUsername() {
-    const newName = prompt('Enter your new username:', rewardUser.username || 'User');
-    if (newName && newName.trim()) {
-      rewardUser.username = newName.trim();
-      persistUser();
-      updateRewardsUI();
-      alert('✅ Username updated!');
-    }
-  }
-
-  function getRewardStats() {
-    return {
-      totalPoints: rewardUser.points,
-      level: rewardUser.level,
-      badgeCount: (rewardUser.badges || []).length,
-      cashbackAvailable: calculateCashBack(rewardUser.points),
-      joinDate: new Date(rewardUser.joinDate).toLocaleDateString(),
-      loginStreak: parseInt(localStorage.getItem('loginStreak')) || 0,
-      totalScans: parseInt(localStorage.getItem('totalScans')) || 0
-    };
-  }
-
-  // --- Initialization -----------------------------------------------
-  function initRewards() {
-    rewardUser = safeParse('rewardUser', defaultUser());
-    rewardForDailyLogin();
-    updateRewardsUI();
-    document.getElementById('redeem-cashback-btn')?.addEventListener('click', redeemCashBack);
-    document.getElementById('change-username-btn')?.addEventListener('click', changeUsername);
-  }
-
-  // --- Animations CSS (kept) ---------------------------------------
-  const style = document.createElement('style');
-  style.textContent = `
-  @keyframes slideInRight { from { transform: translateX(400px); opacity:0 } to { transform: translateX(0); opacity:1 } }
-  @keyframes fadeOut { from { opacity:1 } to { opacity:0 } }
-  `;
-  document.head.appendChild(style);
-
-  // Auto init
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initRewards);
-  } else {
-    initRewards();
-  }
-
-  // Expose a minimal API
-  window.Rewards = {
-    init: initRewards,
-    addPoints: addRewardPoints,
-    awardBadge,
-    rewardForTransaction,
-    rewardForSaving,
-    rewardForScanning,
-    rewardForAIUsage,
-    redeemCashBack,
-    changeUsername,
-    getRewardStats
-  };
-
-  console.log('🏆 Reward system loaded (clean)');
-
-})(window);
-/* ==========================================================
-   reward.js — Standalone Reward System
-   Works independently without ES6 imports
+   reward.js — Clean Standalone Reward System
+   No duplicates, works independently
 ========================================================== */
 
 // Initialize or load current user
@@ -420,7 +68,7 @@ function getLevelColor(level) {
 // =======================
 
 function rewardForTransaction(amount, type) {
-  console.log(`🎁 Rewarding transaction: ${type}, ${amount}`);
+
   
   if (type === "expense") {
     // Reward for tracking expenses
@@ -435,7 +83,6 @@ function rewardForTransaction(amount, type) {
   } else if (type === "income") {
     addRewardPoints(5, "Income recorded");
     
-    // Check for first income
     const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
     const incomeCount = transactions.filter(t => t.type === "income").length;
     if (incomeCount === 1) {
@@ -470,18 +117,19 @@ function rewardForGoalCreation() {
   if (goals.length === 1) {
     awardBadge("Goal Setter");
   }
+  // Removed stray closing brace
+  console.log("🏆 Reward system loaded!");
 }
 
+
 function rewardForScanning(type) {
+  // Old version: Give points for any upload (receipt or pdf)
+  addRewardPoints(5, "File uploaded");
   if (type === "receipt") {
-    addRewardPoints(5, "Receipt scanned");
     awardBadge("Scanner Pro");
   } else if (type === "pdf") {
-    addRewardPoints(5, "PDF scanned");
     awardBadge("PDF Master");
   }
-  
-  // Check scanning streak
   checkScanningStreak();
 }
 
@@ -497,8 +145,6 @@ function rewardForDailyLogin() {
   if (lastLogin !== today) {
     addRewardPoints(5, "Daily login");
     localStorage.setItem("lastRewardLogin", today);
-    
-    // Check for login streak
     checkLoginStreak();
   }
 }
@@ -542,30 +188,22 @@ function checkScanningStreak() {
 // =======================
 
 function updateRewardsUI() {
-  // Update username
-  const usernameEl = document.getElementById("reward-username");
+  const usernameEl = document.getElementById('reward-username');
+  const pointsEl = document.getElementById('reward-points');
+  const levelEl = document.getElementById('reward-level');
+  const badgesEl = document.getElementById('reward-badges');
+  const progressBar = document.getElementById('reward-progress-bar');
+  const nextLevelEl = document.getElementById('next-level-points');
+  const cashbackEl = document.getElementById('reward-cashback');
+
   if (usernameEl) usernameEl.textContent = rewardUser.username;
-  
-  // Update points
-  const pointsEl = document.getElementById("reward-points");
   if (pointsEl) pointsEl.textContent = rewardUser.points;
-  
-  // Update level with color
-  const levelEl = document.getElementById("reward-level");
   if (levelEl) {
     levelEl.textContent = rewardUser.level;
     levelEl.style.color = getLevelColor(rewardUser.level);
     levelEl.style.fontWeight = "bold";
   }
-  
-  // Update cash back
-  const cashbackEl = document.getElementById("reward-cashback");
-  if (cashbackEl) {
-    cashbackEl.textContent = `$${calculateCashBack(rewardUser.points)}`;
-  }
-  
-  // Update badges
-  const badgesEl = document.getElementById("reward-badges");
+  if (cashbackEl) cashbackEl.textContent = calculateCashBack(rewardUser.points);
   if (badgesEl) {
     badgesEl.innerHTML = "";
     if (rewardUser.badges.length === 0) {
@@ -578,48 +216,33 @@ function updateRewardsUI() {
       });
     }
   }
-  
-  // Update progress bar
-  const progressBar = document.getElementById("reward-progress-bar");
-  if (progressBar) {
-    const nextLevel = getNextLevelPoints(rewardUser.level);
-    const currentPoints = rewardUser.points;
-    const prevLevelPoints = getPrevLevelPoints(rewardUser.level);
-    const progress = ((currentPoints - prevLevelPoints) / (nextLevel - prevLevelPoints)) * 100;
-    
-    progressBar.style.width = Math.min(100, progress) + "%";
-  }
-  
-  // Update next level info
-  const nextLevelEl = document.getElementById("next-level-points");
-  if (nextLevelEl) {
-    const nextLevel = getNextLevelPoints(rewardUser.level);
-    const remaining = Math.max(0, nextLevel - rewardUser.points);
+  if (progressBar && nextLevelEl) {
+    let nextPoints = 100;
+    if (rewardUser.level === "Bronze") nextPoints = 100;
+    else if (rewardUser.level === "Silver") nextPoints = 500;
+    else if (rewardUser.level === "Gold") nextPoints = 1000;
+    else nextPoints = 1000;
+    let prevPoints = 0;
+    if (rewardUser.level === "Silver") prevPoints = 100;
+    else if (rewardUser.level === "Gold") prevPoints = 500;
+    else if (rewardUser.level === "Platinum") prevPoints = 1000;
+    const progress = Math.min(100, ((rewardUser.points - prevPoints) / (nextPoints - prevPoints)) * 100);
+    progressBar.style.width = `${progress}%`;
+    const remaining = Math.max(0, nextPoints - rewardUser.points);
     nextLevelEl.textContent = remaining > 0 
       ? `${remaining} points to next level` 
       : "Max level reached!";
   }
 }
 
-function getNextLevelPoints(currentLevel) {
-  const levels = {
-    Bronze: 100,
-    Silver: 500,
-    Gold: 1000,
-    Platinum: 999999
-  };
-  return levels[currentLevel] || 100;
-}
 
-function getPrevLevelPoints(currentLevel) {
-  const levels = {
-    Bronze: 0,
-    Silver: 100,
-    Gold: 500,
-    Platinum: 1000
-  };
-  return levels[currentLevel] || 0;
-}
+// Level thresholds for reference (used in progress bar if needed)
+const levels = {
+  Bronze: 0,
+  Silver: 100,
+  Gold: 500,
+  Platinum: 1000
+};
 
 function showRewardNotification(message) {
   // Create notification element
@@ -628,28 +251,25 @@ function showRewardNotification(message) {
   notif.textContent = message;
   notif.style.cssText = `
     position: fixed;
-    top: 80px;
+    top: 20px;
     right: 20px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 15px 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     z-index: 9999;
     animation: slideInRight 0.5s ease, fadeOut 0.5s ease 2.5s;
     font-weight: 600;
   `;
-  
   document.body.appendChild(notif);
-  
-  // Remove after 3 seconds
   setTimeout(() => {
-    notif.remove();
+    document.body.removeChild(notif);
   }, 3000);
 }
 
 // =======================
-// 💰 Redeem Cash Back
+// =======================
 // =======================
 
 function redeemCashBack() {
@@ -720,7 +340,7 @@ function getRewardStats() {
 }
 
 // =======================
-// 🔧 Initialize Rewards
+// =======================
 // =======================
 
 function initRewards() {
@@ -772,4 +392,3 @@ if (document.readyState === 'loading') {
   initRewards();
 }
 
-console.log("🏆 Reward system loaded!");
