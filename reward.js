@@ -1,6 +1,9 @@
 /* ==========================================================
    reward.js — Clean Standalone Reward System
-   No duplicates, works independently
+   Version: FINAL (All Syntax Errors Fixed)
+   ✅ Console.log moved to correct location
+   ✅ All functions properly closed
+   ✅ No stray braces
 ========================================================== */
 
 // Initialize or load current user
@@ -68,8 +71,6 @@ function getLevelColor(level) {
 // =======================
 
 function rewardForTransaction(amount, type) {
-
-  
   if (type === "expense") {
     // Reward for tracking expenses
     addRewardPoints(2, "Expense tracked");
@@ -117,19 +118,17 @@ function rewardForGoalCreation() {
   if (goals.length === 1) {
     awardBadge("Goal Setter");
   }
-  // Removed stray closing brace
-  console.log("🏆 Reward system loaded!");
 }
 
-
 function rewardForScanning(type) {
-  // Old version: Give points for any upload (receipt or pdf)
   addRewardPoints(5, "File uploaded");
+  
   if (type === "receipt") {
     awardBadge("Scanner Pro");
   } else if (type === "pdf") {
     awardBadge("PDF Master");
   }
+  
   checkScanningStreak();
 }
 
@@ -218,14 +217,22 @@ function updateRewardsUI() {
   }
   if (progressBar && nextLevelEl) {
     let nextPoints = 100;
-    if (rewardUser.level === "Bronze") nextPoints = 100;
-    else if (rewardUser.level === "Silver") nextPoints = 500;
-    else if (rewardUser.level === "Gold") nextPoints = 1000;
-    else nextPoints = 1000;
     let prevPoints = 0;
-    if (rewardUser.level === "Silver") prevPoints = 100;
-    else if (rewardUser.level === "Gold") prevPoints = 500;
-    else if (rewardUser.level === "Platinum") prevPoints = 1000;
+    
+    if (rewardUser.level === "Bronze") {
+      nextPoints = 100;
+      prevPoints = 0;
+    } else if (rewardUser.level === "Silver") {
+      nextPoints = 500;
+      prevPoints = 100;
+    } else if (rewardUser.level === "Gold") {
+      nextPoints = 1000;
+      prevPoints = 500;
+    } else if (rewardUser.level === "Platinum") {
+      nextPoints = 1000;
+      prevPoints = 1000;
+    }
+    
     const progress = Math.min(100, ((rewardUser.points - prevPoints) / (nextPoints - prevPoints)) * 100);
     progressBar.style.width = `${progress}%`;
     const remaining = Math.max(0, nextPoints - rewardUser.points);
@@ -235,17 +242,7 @@ function updateRewardsUI() {
   }
 }
 
-
-// Level thresholds for reference (used in progress bar if needed)
-const levels = {
-  Bronze: 0,
-  Silver: 100,
-  Gold: 500,
-  Platinum: 1000
-};
-
 function showRewardNotification(message) {
-  // Create notification element
   const notif = document.createElement("div");
   notif.className = "reward-notification";
   notif.textContent = message;
@@ -264,12 +261,14 @@ function showRewardNotification(message) {
   `;
   document.body.appendChild(notif);
   setTimeout(() => {
-    document.body.removeChild(notif);
+    if (document.body.contains(notif)) {
+      document.body.removeChild(notif);
+    }
   }, 3000);
 }
 
 // =======================
-// =======================
+// 💰 Redeem Cash Back
 // =======================
 
 function redeemCashBack() {
@@ -340,7 +339,7 @@ function getRewardStats() {
 }
 
 // =======================
-// =======================
+// 🎬 Initialization
 // =======================
 
 function initRewards() {
@@ -360,8 +359,11 @@ function initRewards() {
   updateRewardsUI();
   
   // Setup event listeners
-  document.getElementById("redeem-cashback-btn")?.addEventListener("click", redeemCashBack);
-  document.getElementById("change-username-btn")?.addEventListener("click", changeUsername);
+  const redeemBtn = document.getElementById("redeem-cashback-btn");
+  const usernameBtn = document.getElementById("change-username-btn");
+  
+  if (redeemBtn) redeemBtn.addEventListener("click", redeemCashBack);
+  if (usernameBtn) usernameBtn.addEventListener("click", changeUsername);
 }
 
 // Add CSS for animations
@@ -392,3 +394,4 @@ if (document.readyState === 'loading') {
   initRewards();
 }
 
+console.log("🏆 Reward system loaded successfully!");

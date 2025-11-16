@@ -1,16 +1,19 @@
-/* ==========================================================
-   main.js — Unified Logic for AI Finance Manager
-   Version: 5.4.149 (PDF.js Compatible)
-   Features:
-   ✅ Budget Tracker + Chart.js
-   ✅ Receipt Scanner (Tesseract.js)
-   ✅ PDF Scanner (PDF.js + OCR Fallback)
-   ✅ Auto Total Extraction → Budget Sync
-   ✅ Smart Planner with AI Goal Generator
-========================================================== */
-
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+let goals = JSON.parse(localStorage.getItem("goals")) || [];
 let chart;
+
+// =======================
+// 🔧 INITIALIZATION
+// =======================
+function initializePDFJS() {
+  if (typeof window.pdfjsLib !== 'undefined') {
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
+    console.log('✅ PDF.js worker configured');
+    return true;
+  }
+  return false;
+}
 
 // =======================
 // 📊 Budget Tracker
@@ -64,7 +67,6 @@ function updateTransactionList() {
 }
 
 function deleteTransaction(index) {
-  const transaction = transactions[index];
   transactions.splice(index, 1);
   localStorage.setItem("transactions", JSON.stringify(transactions));
   localStorage.setItem("lastAIUpdate", Date.now());
@@ -75,8 +77,15 @@ function updateChart(income, expense) {
   const canvas = document.getElementById("chart");
   if (!canvas) return;
 
+  // Check if Chart.js is loaded
+  if (typeof Chart === 'undefined') {
+    console.warn('Chart.js not loaded - skipping chart update');
+    return;
+  }
+
   const ctx = canvas.getContext("2d");
   if (chart) chart.destroy();
+  
   chart = new Chart(ctx, {
     type: "doughnut",
     data: {
@@ -95,21 +104,45 @@ function updateChart(income, expense) {
 }
 
 // =======================
-// 💡 Total Extraction Utility
+// 💡 Enhanced Total Extraction
 // =======================
 function extractTotalFromText(text) {
+  const cleanText = text.replace(/\s+/g, ' ').trim();
+  
+  // Enhanced patterns with optional decimals
   const patterns = [
-    /total[:\s]*\$?\s*([\d,]+\.\d{2})/i,
-    /amount due[:\s]*\$?\s*([\d,]+\.\d{2})/i,
-    /balance[:\s]*\$?\s*([\d,]+\.\d{2})/i,
-    /grand total[:\s]*\$?\s*([\d,]+\.\d{2})/i,
-    /sum[:\s]*\$?\s*([\d,]+\.\d{2})/i
+    /total[:\s]*\$?\s*([\d,]+\.?\d{0,2})/i,
+    /amount\s+due[:\s]*\$?\s*([\d,]+\.?\d{0,2})/i,
+    /balance[:\s]*\$?\s*([\d,]+\.?\d{0,2})/i,
+    /grand\s+total[:\s]*\$?\s*([\d,]+\.?\d{0,2})/i,
+    /sum[:\s]*\$?\s*([\d,]+\.?\d{0,2})/i,
+    /\$\s*([\d,]+\.?\d{0,2})\s*total/i,
+    /payment[:\s]*\$?\s*([\d,]+\.?\d{0,2})/i,
+    /amount[:\s]*\$?\s*([\d,]+\.?\d{0,2})/i
   ];
 
   for (const pattern of patterns) {
-    const match = text.match(pattern);
-    if (match) return parseFloat(match[1].replace(/,/g, ""));
+    const match = cleanText.match(pattern);
+    if (match) {
+      const value = parseFloat(match[1].replace(/,/g, ""));
+      // Sanity check
+      if (value > 0 && value < 1000000) {
+        return value;
+      }
+    }
   }
+  
+  // Fallback: find all dollar amounts and return largest
+  const amounts = cleanText.match(/\$\s*([\d,]+\.\d{2})/g);
+  if (amounts && amounts.length > 0) {
+    const values = amounts
+      .map(a => parseFloat(a.replace(/[$,]/g, '')))
+      .filter(v => v > 0 && v < 1000000);
+    if (values.length > 0) {
+      return Math.max(...values);
+    }
+  }
+  
   return null;
 }
 
@@ -118,7 +151,7 @@ function extractTotalFromText(text) {
 // =======================
 async function analyzeReceipt(file) {
   const output = document.getElementById("ai-output");
-  output.textContent = "📸 Reading image using OCR...";
+  output.innerHTML = "📸 Scanning image with OCR...<br><small>This may take 10-30 seconds</small>";
   
   // Reward for scanning receipt
   if (typeof rewardForScanning === 'function') {
@@ -126,18 +159,44 @@ async function analyzeReceipt(file) {
   }
 
   try {
-    const { data: { text } } = await Tesseract.recognize(file, "eng");
+    // Check if Tesseract is loaded
+    if (typeof Tesseract === 'undefined') {
+      throw new Error('Tesseract.js not loaded. Please refresh the page.');
+    }
+    
+    const { data: { text, confidence } } = await Tesseract.recognize(file, "eng", {
+      logger: m => {
+        if (m.status === 'recognizing text') {
+          output.innerHTML = `🔍 Processing: ${Math.round(m.progress * 100)}%`;
+        }
+      }
+    });
+    
     const total = extractTotalFromText(text);
 
     if (total) {
-      output.innerHTML = `<b>✅ Detected Total:</b> $${total.toFixed(2)}`;
+      output.innerHTML = `
+        <b>✅ Detected Total:</b> $${total.toFixed(2)}<br>
+        <small>Confidence: ${Math.round(confidence)}%</small>
+        <details style="margin-top: 10px;">
+          <summary style="cursor:pointer;font-weight:bold;">View extracted text</summary>
+          <pre style="max-height: 200px; overflow-y: auto; font-size: 0.85em; margin-top:10px; padding:10px; background:#f5f5f5; border-radius:5px;">${text}</pre>
+        </details>
+      `;
       addTotalToBudget(total, "expense", "Receipt Total");
     } else {
-      output.innerHTML = "❌ No total found in receipt.";
+      output.innerHTML = `
+        ⚠️ No total found in receipt.<br>
+        <small>Confidence: ${Math.round(confidence)}%</small>
+        <details style="margin-top: 10px;">
+          <summary style="cursor:pointer;font-weight:bold;">View extracted text</summary>
+          <pre style="max-height: 200px; overflow-y: auto; font-size: 0.85em;">${text}</pre>
+        </details>
+      `;
     }
   } catch (err) {
     console.error("Receipt OCR Error:", err);
-    output.textContent = "⚠️ Failed to analyze receipt.";
+    output.innerHTML = `❌ Error analyzing image: ${err.message}`;
   }
 }
 
@@ -146,7 +205,7 @@ async function analyzeReceipt(file) {
 // =======================
 async function analyzePDF(file) {
   const output = document.getElementById("output") || document.getElementById("ai-output");
-  output.textContent = "🔍 Reading PDF...";
+  output.innerHTML = "📄 Reading PDF...";
   
   // Reward for scanning PDF
   if (typeof rewardForScanning === 'function') {
@@ -155,13 +214,14 @@ async function analyzePDF(file) {
 
   try {
     const pdfjsLib = window.pdfjsLib;
-    if (!pdfjsLib) throw new Error("PDF.js not loaded properly.");
-
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.149/pdf.worker.min.mjs";
+    if (!pdfjsLib) {
+      throw new Error("PDF.js not loaded. Please refresh the page.");
+    }
 
     const pdfData = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+
+    output.innerHTML = `📖 Extracting text from ${pdf.numPages} page(s)...`;
 
     let allText = "";
     for (let i = 1; i <= pdf.numPages; i++) {
@@ -171,16 +231,29 @@ async function analyzePDF(file) {
       allText += text + "\n";
     }
 
-    if (allText.trim().length > 30) {
-      output.innerHTML = `<pre style="white-space: pre-wrap;">${allText.trim()}</pre>`;
+    if (allText.trim().length > 50) {
       const total = extractTotalFromText(allText);
+      
+      output.innerHTML = `
+        <b>✅ PDF Text Extracted</b><br>
+        ${total ? `<b>Detected Total:</b> $${total.toFixed(2)}` : '⚠️ No total found'}
+        <details style="margin-top: 10px;">
+          <summary style="cursor:pointer;font-weight:bold;">View extracted text (${allText.length} chars)</summary>
+          <pre style="max-height: 300px; overflow-y: auto; font-size: 0.85em; margin-top:10px; padding:10px; background:#f5f5f5; border-radius:5px;">${allText.trim()}</pre>
+        </details>
+      `;
+      
       if (total) addTotalToBudget(total, "expense", "PDF Total");
       return;
     }
 
-    output.textContent = "🧠 Running OCR (image-based PDF detected)...";
+    output.innerHTML = "🧠 Running OCR (image-based PDF)...<br><small>This may take 30-60 seconds</small>";
     let ocrText = "";
-    for (let i = 1; i <= pdf.numPages; i++) {
+    const maxPages = Math.min(pdf.numPages, 5);
+    
+    for (let i = 1; i <= maxPages; i++) {
+      output.innerHTML = `🔍 OCR Progress: Page ${i} of ${maxPages}...`;
+      
       const page = await pdf.getPage(i);
       const viewport = page.getViewport({ scale: 2 });
       const canvas = document.createElement("canvas");
@@ -193,12 +266,21 @@ async function analyzePDF(file) {
       ocrText += text + "\n";
     }
 
-    output.innerHTML = `<pre style="white-space: pre-wrap;">${ocrText.trim()}</pre>`;
     const total = extractTotalFromText(ocrText);
+    
+    output.innerHTML = `
+      <b>✅ PDF OCR Complete</b><br>
+      ${total ? `<b>Detected Total:</b> $${total.toFixed(2)}` : '⚠️ No total found'}
+      <details style="margin-top: 10px;">
+        <summary style="cursor:pointer;font-weight:bold;">View extracted text</summary>
+        <pre style="max-height: 300px; overflow-y: auto; font-size: 0.85em;">${ocrText.trim()}</pre>
+      </details>
+    `;
+    
     if (total) addTotalToBudget(total, "expense", "PDF OCR Total");
   } catch (err) {
     console.error("PDF Analysis Error:", err);
-    output.textContent = "❌ Error analyzing PDF: " + err.message;
+    output.innerHTML = `❌ Error analyzing PDF: ${err.message}`;
   }
 }
 
@@ -206,7 +288,12 @@ async function analyzePDF(file) {
 // 💰 Sync to Budget
 // =======================
 function addTotalToBudget(amount, type, label) {
-  transactions.push({ description: label, amount, type });
+  transactions.push({ 
+    description: label, 
+    amount, 
+    type,
+    date: new Date().toISOString()
+  });
   localStorage.setItem("transactions", JSON.stringify(transactions));
   localStorage.setItem("lastAIUpdate", Date.now());
   updateBudgetUI();
@@ -214,8 +301,9 @@ function addTotalToBudget(amount, type, label) {
   const output = document.getElementById("ai-output") || document.getElementById("output");
   if (output) {
     const msg = document.createElement("p");
-    msg.style.color = "green";
-    msg.textContent = `💾 Added $${amount.toFixed(2)} to your Budget Tracker!`;
+    msg.style.cssText = "color:#4CAF50;font-weight:bold;margin-top:15px;padding:10px;background:#e8f5e9;border-radius:5px;";
+    msg.innerHTML = `💾 Added $${amount.toFixed(2)} to your Budget Tracker!<br>
+      <small><a href="BudgetTracker.html" style="color: #2196F3;">View in Budget Tracker →</a></small>`;
     output.appendChild(msg);
   }
 }
@@ -223,7 +311,6 @@ function addTotalToBudget(amount, type, label) {
 // =======================
 // 🧠 Smart Finance Planner + AI Goal Generator
 // =======================
-let goals = JSON.parse(localStorage.getItem("goals")) || [];
 
 function updateGoalsUI() {
   const goalList = document.getElementById("goals");
@@ -259,6 +346,17 @@ function updateGoalsUI() {
 }
 
 function deleteGoal(index) {
+  const goal = goals[index];
+  const { totalIncome, totalExpense } = analyzeSpendingTrends();
+  const balance = totalIncome - totalExpense;
+  
+  // Check if goal was completed before deleting
+  if (balance >= goal.amount) {
+    if (typeof rewardForGoalCompletion === 'function') {
+      rewardForGoalCompletion(goal.name);
+    }
+  }
+  
   goals.splice(index, 1);
   updateGoalsUI();
 }
@@ -277,7 +375,7 @@ function generateAIAdvice() {
   const goalTotal = goals.reduce((s, g) => s + g.amount, 0);
   const goalCount = goals.length;
 
-  let advice = `💰 You’ve earned <b>$${totalIncome.toFixed(2)}</b> and spent <b>$${totalExpense.toFixed(2)}</b>, leaving <b>$${balance.toFixed(2)}</b>.<br><br>`;
+  let advice = `💰 You've earned <b>$${totalIncome.toFixed(2)}</b> and spent <b>$${totalExpense.toFixed(2)}</b>, leaving <b>$${balance.toFixed(2)}</b>.<br><br>`;
   if (topCategory) advice += `📊 Biggest spending: <b>${topCategory[0]}</b> ($${topCategory[1].toFixed(2)}).<br>`;
   if (goalCount > 0) advice += `🎯 ${goalCount} active goal${goalCount > 1 ? "s" : ""} totaling <b>$${goalTotal.toFixed(2)}</b>.<br><br>`;
 
@@ -285,7 +383,7 @@ function generateAIAdvice() {
   else if (balance < totalIncome * 0.1) advice += `💡 Savings margin is low. Try saving at least 15% of your income.`;
   else advice += `✅ Excellent! You're managing your money well — consider investing surplus funds.`;
 
-  output.innerHTML = `<div class="ai-box"><h4>🧩 AI Plan Summary</h4><p>${advice}</p></div>`;
+  output.innerHTML = `<div class="ai-box" style="background:#e3f2fd;padding:20px;border-radius:10px;border-left:4px solid #2196F3;"><h4>🧩 AI Plan Summary</h4><p>${advice}</p></div>`;
 
   generateAIGoals(balance, totalIncome, categories);
 }
@@ -301,7 +399,13 @@ function generateAIGoals(balance, income, categories) {
   if (newGoals.length === 0) newGoals.push({ name: "General Savings", amount: income * 0.1 });
 
   newGoals.forEach(goal => {
-    if (!goals.some(g => g.name === goal.name)) goals.push(goal);
+    if (!goals.some(g => g.name === goal.name)) {
+      goals.push(goal);
+      // Reward for AI-generated goal
+      if (typeof rewardForGoalCreation === 'function') {
+        rewardForGoalCreation();
+      }
+    }
   });
 
   localStorage.setItem("goals", JSON.stringify(goals));
@@ -309,9 +413,9 @@ function generateAIGoals(balance, income, categories) {
 
   const addedGoals = newGoals.map(g => `<li>💡 ${g.name}: $${g.amount.toFixed(2)}</li>`).join("");
   output.innerHTML += `
-    <div class="ai-box" style="background:#e8f5e9;border-left:4px solid #4CAF50;">
+    <div class="ai-box" style="background:#e8f5e9;border-left:4px solid #4CAF50;padding:20px;border-radius:10px;margin-top:20px;">
       <h4>✨ New AI-Generated Goals</h4>
-      <ul>${addedGoals}</ul>
+      <ul style="list-style:none;padding-left:0;">${addedGoals}</ul>
       <p><small>These were automatically added to your goal list based on your financial trends.</small></p>
     </div>`;
 }
@@ -327,11 +431,17 @@ function analyzeSpendingTrends() {
   const categories = {};
   for (let t of expenses) {
     const desc = t.description.toLowerCase();
-    if (desc.includes("food") || desc.includes("restaurant")) categories.food = (categories.food || 0) + t.amount;
-    else if (desc.includes("rent") || desc.includes("house")) categories.housing = (categories.housing || 0) + t.amount;
-    else if (desc.includes("subscript") || desc.includes("netflix") || desc.includes("spotify")) categories.subscriptions = (categories.subscriptions || 0) + t.amount;
-    else if (desc.includes("transport") || desc.includes("uber") || desc.includes("gas")) categories.transport = (categories.transport || 0) + t.amount;
-    else categories.other = (categories.other || 0) + t.amount;
+    if (desc.includes("food") || desc.includes("restaurant") || desc.includes("grocery")) {
+      categories.food = (categories.food || 0) + t.amount;
+    } else if (desc.includes("rent") || desc.includes("house") || desc.includes("mortgage")) {
+      categories.housing = (categories.housing || 0) + t.amount;
+    } else if (desc.includes("subscript") || desc.includes("netflix") || desc.includes("spotify")) {
+      categories.subscriptions = (categories.subscriptions || 0) + t.amount;
+    } else if (desc.includes("transport") || desc.includes("uber") || desc.includes("gas")) {
+      categories.transport = (categories.transport || 0) + t.amount;
+    } else {
+      categories.other = (categories.other || 0) + t.amount;
+    }
   }
 
   return { totalExpense, totalIncome, balance, categories };
@@ -341,6 +451,11 @@ function analyzeSpendingTrends() {
 // 🔧 Event Hooks
 // =======================
 document.addEventListener("DOMContentLoaded", () => {
+  console.log('🚀 AI Finance Manager initialized');
+  
+  // Initialize PDF.js
+  initializePDFJS();
+  
   const form = document.getElementById("transaction-form");
   if (form) {
     form.addEventListener("submit", e => {
@@ -349,7 +464,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const amt = parseFloat(document.getElementById("amount").value);
       const type = document.getElementById("type").value;
       if (!desc || isNaN(amt)) return alert("Please enter valid data.");
-      transactions.push({ description: desc, amount: amt, type });
+      
+      transactions.push({ 
+        description: desc, 
+        amount: amt, 
+        type,
+        date: new Date().toISOString()
+      });
       updateBudgetUI();
       
       // Trigger reward
@@ -364,20 +485,64 @@ document.addEventListener("DOMContentLoaded", () => {
   const receiptInput = document.getElementById("receiptInput");
   const analyzeBtn = document.getElementById("analyzeBtn");
   if (receiptInput && analyzeBtn) {
-    analyzeBtn.addEventListener("click", () => {
+    analyzeBtn.addEventListener("click", async () => {
       const file = receiptInput.files[0];
       if (!file) return alert("Please upload a receipt image.");
-      analyzeReceipt(file);
+      
+      analyzeBtn.disabled = true;
+      analyzeBtn.textContent = "Processing...";
+      
+      try {
+        await analyzeReceipt(file);
+      } finally {
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "Detect Total";
+      }
     });
   }
 
   const pdfInput = document.getElementById("pdfFile");
   const scanBtn = document.getElementById("scanBtn");
   if (pdfInput && scanBtn) {
-    scanBtn.addEventListener("click", () => {
+    scanBtn.addEventListener("click", async () => {
       const file = pdfInput.files[0];
       if (!file) return alert("Please upload a PDF file.");
-      analyzePDF(file);
+      
+      scanBtn.disabled = true;
+      scanBtn.textContent = "Processing...";
+      
+      try {
+        await analyzePDF(file);
+      } finally {
+        scanBtn.disabled = false;
+        scanBtn.textContent = "Scan PDF";
+      }
+    });
+  }
+
+  // Unified Document Scanner
+  const docInput = document.getElementById("docInput");
+  const analyzeDocBtn = document.getElementById("analyzeDoc");
+  if (docInput && analyzeDocBtn) {
+    analyzeDocBtn.addEventListener("click", async () => {
+      const file = docInput.files[0];
+      if (!file) return alert("Please upload a receipt or PDF.");
+
+      analyzeDocBtn.disabled = true;
+      analyzeDocBtn.textContent = "Processing...";
+
+      try {
+        if (file.type === "application/pdf") {
+          await analyzePDF(file);
+        } else if (file.type.startsWith("image/")) {
+          await analyzeReceipt(file);
+        } else {
+          alert("Unsupported file type. Please upload a PDF or image.");
+        }
+      } finally {
+        analyzeDocBtn.disabled = false;
+        analyzeDocBtn.textContent = "Analyze Document";
+      }
     });
   }
 
@@ -388,17 +553,28 @@ document.addEventListener("DOMContentLoaded", () => {
       const name = document.getElementById("goal-name").value.trim();
       const amount = parseFloat(document.getElementById("goal-amount").value);
       if (!name || isNaN(amount)) return alert("Please enter valid goal data.");
+      
       goals.push({ name, amount });
       updateGoalsUI();
+      
+      // Reward for creating goal
+      if (typeof rewardForGoalCreation === 'function') {
+        rewardForGoalCreation();
+      }
+      
       goalForm.reset();
     });
   }
 
   const analyzeFinanceBtn = document.getElementById("analyze-finances");
-  if (analyzeFinanceBtn) analyzeFinanceBtn.addEventListener("click", generateAIAdvice);
+  if (analyzeFinanceBtn) {
+    analyzeFinanceBtn.addEventListener("click", generateAIAdvice);
+  }
 
   updateBudgetUI();
   updateGoalsUI();
+  
+  console.log('✅ All event listeners attached');
 });
 
 window.addEventListener("storage", e => {
@@ -406,4 +582,10 @@ window.addEventListener("storage", e => {
     transactions = JSON.parse(localStorage.getItem("transactions")) || [];
     updateBudgetUI();
   }
+  if (e.key === "goals") {
+    goals = JSON.parse(localStorage.getItem("goals")) || [];
+    updateGoalsUI();
+  }
 });
+
+console.log('✅ main.js loaded successfully');
